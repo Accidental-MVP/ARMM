@@ -29,35 +29,11 @@ policy has to know which one it is looking at.
 
 ## The state machine
 
-```mermaid
-stateDiagram-v2
-    direction LR
-    [*] --> BAND
-
-    BAND --> DRIFT: EMA trend persists
-    DRIFT --> BAND: trend decays
-
-    BAND --> EVENT: price jump AND spread widening
-    DRIFT --> EVENT: price jump AND spread widening
-    EVENT --> BAND: hold expires, then cooldown
-
-    note right of BAND
-        Mean-reverting inside a rolling range.
-        Quote both sides, lean on reversion.
-        Widest inventory cap.
-    end note
-
-    note right of DRIFT
-        Persistent directional move.
-        Skew with the trend to cut adverse fills.
-    end note
-
-    note right of EVENT
-        Jump or dislocation.
-        Cut exposure, widen, sit out the cooldown.
-        Tightest inventory cap.
-    end note
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/states-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="assets/states-light.png">
+  <img src="assets/states-light.png" alt="State machine: BAND, DRIFT and EVENT with the transition conditions between them">
+</picture>
 
 `BAND` is the default it falls back to. The transitions carry **hysteresis**, and `EVENT` has
 both a hold period and a cooldown — without them a single shock retriggers repeatedly and the
